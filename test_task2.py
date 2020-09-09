@@ -1,7 +1,6 @@
-from web_serv import fib_decompose, get_fib_seq
+from task2 import fib_decompose, get_fib_seq
 import itertools as it
 import random
-import numpy as np
 
 def test_fib_decompose():
     given_answer = fib_decompose(11)
@@ -14,7 +13,7 @@ def test_fib_decompose():
 
     
     
-    for i in np.random.randint(2,100,5):
+    for i in (random.randint(2,100) for _ in range(50)):
         decompositions = fib_decompose(i)
 
         print("checking that there is no 1 in the decompositions".format(i))
