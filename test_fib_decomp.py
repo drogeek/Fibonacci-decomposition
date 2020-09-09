@@ -1,4 +1,4 @@
-from task2 import fib_decompose, get_fib_seq
+from fib_decomp import fib_decompose, get_fib_seq
 import itertools as it
 import random
 

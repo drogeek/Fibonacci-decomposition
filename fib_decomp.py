@@ -1,8 +1,7 @@
 import math as m
-from itertools import chain, takewhile
 import itertools as it
 from utils import app, cache
-from db import lookup_table, insert_into_db, conn
+from db import lookup_table, insert_into_db
 
 SQRT5 = m.sqrt(5)
 INV_SQRT5 = 1/SQRT5
@@ -28,23 +27,36 @@ def get_max_fib(n):
 
 
 class FunctionCache:
-    def __init__(self, f, conn):
+    def __init__(self, f, conn=None):
         self.conn = conn
+        if not self.conn:
+            self.cache = {}
         self.f = f
 
     @cache.memoize(timeout=5000)
     def get(self, key):
-        value = lookup_table(key)
-        if not value:
-            #the additional tuple is a bit dirty…
-            #but the fetchone method called in lookup_table
-            #return a tuple, and this way it works in both cases
-            value = (self.f(key),)
-            insert_into_db(key, tuple(value[0]))
-        return value[0]
+        #handle case we have a db
+        if self.conn:
+            value = lookup_table(self.conn, key)
+            if not value:
+                #the additional tuple is a bit dirty…
+                #but the fetchone method called in lookup_table
+                #return a tuple, and this way it works in both cases
+                value = (self.f(key),)
+                insert_into_db(self.conn, key, tuple(value[0]))
+            return value[0]
+        else:
+        #handle case we don't have a db (for instance, for tests)
+            if key not in self.cache:
+                value = self.f(key)
+                self.cache[key] = value
+            return self.cache[key]
     
     def __contains__(self, key):
-        return lookup_table(key) != None
+        if self.conn:
+            return lookup_table(self.conn, key) != None
+        else:
+            return self.cache.__contains__(key)
         
 class FibonacciCache:
     def __init__(self):
@@ -60,7 +72,7 @@ def fib_decompose(n, cache=None):
     result = set()
 
     if not cache:
-        cache = FunctionCache(lambda x: fib_decompose(x, cache), conn)
+        cache = FunctionCache(lambda x: fib_decompose(x, cache))
     # if it's already in the cache, why bother? Let's give it back!
     if n in cache:
         return cache.get(n)

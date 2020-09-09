@@ -1,15 +1,7 @@
-import psycopg2
 import json
 
-#TODO create a pool of connections instead
-try:
-    conn=psycopg2.connect("host='db' dbname='postgres' user='postgres' password='titbpembanmih32s'")
-except:
-    print ("I am unable to connect to the database.")
 
-
-
-def insert_into_db(key, value):
+def insert_into_db(conn, key, value):
     value = json.dumps(value)
     cur = conn.cursor()
     try:
@@ -18,7 +10,7 @@ def insert_into_db(key, value):
     except:
         print("can't insert into table")
 
-def lookup_table(key):
+def lookup_table(conn, key):
     cur = conn.cursor()
     try:
         cur.execute("SELECT data FROM fib WHERE id = {}".format(key))
@@ -26,7 +18,7 @@ def lookup_table(key):
     except:
         print("couldn't look into table")
 
-def create_table():
+def create_table(conn):
     cur = conn.cursor()
     try:
         cur.execute("CREATE TABLE IF NOT EXISTS fib (id integer, data jsonb);")

@@ -1,22 +1,17 @@
-from utils import app
-from task2 import fib_decompose, FunctionCache
+from utils import app, conn
+from fib_decomp import fib_decompose, FunctionCache
 import json
-from db import conn
+
 
 @app.route('/fib/<int:n>', methods=['GET'])
 def fib_decompose_exposed(n):
+    #create the cache that will call fib_decompose if the value for n doesn't exist in the database
     cache = FunctionCache(lambda x: fib_decompose(x, cache), conn)
     return json.dumps(tuple(cache.get(n))), 200
 
 @app.route('/')
 def hello():
-    cur = conn.cursor()
-    try:
-        cur.execute("SELECT * from fib;")
-        return json.dumps(cur.fetchall()), 200
-    except:
-        print("I can't SELECT from fib")
-    return "error", 500
+    return "hello", 200
 
 average_time = 0
 @app.route('/health', methods=['GET'])
