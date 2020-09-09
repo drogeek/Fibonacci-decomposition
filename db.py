@@ -1,6 +1,14 @@
 import json
 
+def find_max_value(conn):
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT MAX(id) FROM fib")
+        return cur.fetchone()
+    except:
+        print("couldn't question the db for max")
 
+    
 def insert_into_db(conn, key, value):
     value = json.dumps(value)
     cur = conn.cursor()

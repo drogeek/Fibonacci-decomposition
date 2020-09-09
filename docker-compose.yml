@@ -8,5 +8,9 @@ services:
 
     fib_decomp:
         build: .
+        environment:
+        - IP_ADDR=${IP_ADDR}
+        - TIMEOUT=${TIMEOUT}
+        - PORT=${PORT}
         ports:
-        - "5000:5000"
+        - "${PORT}:5000"
