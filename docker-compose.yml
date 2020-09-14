@@ -12,5 +12,7 @@ services:
         - IP_ADDR=${IP_ADDR}
         - TIMEOUT=${TIMEOUT}
         - PORT=${PORT}
+        depends_on:
+        - db
         ports:
         - "${PORT}:5000"

@@ -9,5 +9,5 @@ COPY . .
 #ENV FLASK_RUN_HOST 0.0.0.0
 EXPOSE ${PORT} 
 
-ENTRYPOINT /usr/local/bin/gunicorn --access-logfile - --timeout ${TIMEOUT} -b ${IP_ADDR}:5000 web_serv:app
+ENTRYPOINT /bin/sleep 5 && /usr/local/bin/gunicorn --access-logfile - --timeout ${TIMEOUT} -b ${IP_ADDR}:5000 web_serv:app
 #CMD ["flask", "run"]
